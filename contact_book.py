@@ -7,26 +7,42 @@ def display_menu():
     print("5. List All Contacts")
     print("6. Exit")
 
-
 def add_contact(contact_book):
-    name = input()
-    phone = input()
-    email = input()
-    address = input()
+    name = input("Enter name: ").strip()
 
-    # check the name already exists
+    if not name:
+        print("Name cannot be empty!")
+        return
+
+    phone = input("Enter phone number: ").strip()
+
+    if not phone:
+        print("Phone number cannot be empty!")
+        return
+
+    email = input("Enter email: ").strip()
+
+    if not email:
+        print("Email cannot be empty!")
+        return
+
+    address = input("Enter address: ").strip()
+
+    if not address:
+        print("Address cannot be empty!")
+        return
+
+    # Check if the name already exists
     if name in contact_book:
         print("Contact already exists!")
-
-    elif name not in contact_book:
+    else:
         contact_book[name] = {
             "phone": phone,
             "email": email,
             "address": address
         }
 
-        print("Contact added successfully!")
-
+    print("Contact added successfully!")
 
 def view_contact(contact_book):
     contact_name = input()
