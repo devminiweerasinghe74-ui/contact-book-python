@@ -62,26 +62,30 @@ def view_contact(contact_book):
 
 
 def edit_contact(contact_book):
-    contact_name = input()
+    contact_name = input("Enter contact name to edit: ").strip()
 
-    # check given user already in the list
-    if contact_name in contact_book:
-        # input rest of details
-        contact_phone = input()
-        contact_email = input()
-        contact_address = input()
-
-        contact = contact_book[contact_name]
-
-        contact['phone'] = contact_phone
-        contact['email'] = contact_email
-        contact['address'] = contact_address
-
-        print("Contact updated successfully!")
-
-    # if user give empty input
-    elif contact_name not in contact_book or contact_name == '':
+    if contact_name not in contact_book:
         print("Contact not found!")
+        return
+
+    contact = contact_book[contact_name]
+
+    print("Press Enter to keep the current value.")
+
+    phone = input(f"Phone [{contact['phone']}]: ").strip()
+    email = input(f"Email [{contact['email']}]: ").strip()
+    address = input(f"Address [{contact['address']}]: ").strip()
+
+    if phone:
+        contact['phone'] = phone
+
+    if email:
+        contact['email'] = email
+
+    if address:
+        contact['address'] = address
+
+    print("Contact updated successfully!")
 
 
 def delete_contact(contact_book):
