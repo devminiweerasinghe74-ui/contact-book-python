@@ -1,3 +1,5 @@
+import json
+
 def display_menu():
     print("Contact Book Menu:")
     print("1. Add Contact")
@@ -5,7 +7,8 @@ def display_menu():
     print("3. Edit Contact")
     print("4. Delete Contact")
     print("5. List All Contacts")
-    print("6. Exit")
+    print("6. Search Contact")
+    print("7. Exit")
 
 def add_contact(contact_book):
     name = input("Enter name: ").strip()
@@ -89,15 +92,25 @@ def edit_contact(contact_book):
 
 
 def delete_contact(contact_book):
-    contact_name = input()
+    contact_name = input("Enter contact name to delete: ").strip()
 
-    if contact_name in contact_book:
+    if contact_name not in contact_book:
+        print("Contact not found!")
+        return
 
+    confirmation = input(
+        f"Are you sure you want to delete '{contact_name}'? (y/n): "
+    ).strip().lower()
+
+    if confirmation == 'y':
         del contact_book[contact_name]
         print("Contact deleted successfully!")
 
+    elif confirmation == 'n':
+        print("Deletion cancelled.")
+
     else:
-        print("Contact not found!")
+        print("Invalid choice. Deletion cancelled.")
 
 
 def list_all_contacts(contact_book):
@@ -115,8 +128,44 @@ def list_all_contacts(contact_book):
             print(f"Address: {contact['address']}")
             print()
 
+def search_contact(contact_book):
+    search_name = input("Enter contact name to search: ").strip().lower()
+
+    if not search_name:
+        print("Search name cannot be empty!")
+        return
+
+    found = False
+
+    for contact_name, contact in contact_book.items():
+        if search_name in contact_name.lower():
+            print("\nContact found:")
+            print(f"Name: {contact_name}")
+            print(f"Phone: {contact['phone']}")
+            print(f"Email: {contact['email']}")
+            print(f"Address: {contact['address']}")
+            print()
+
+            found = True
+
+    if not found:
+        print("No matching contacts found.")
+
+def load_contacts():
+    try:
+        with open("contacts.json", "r") as file:
+            return json.load(file)
+
+    except FileNotFoundError:
+        return {}
+
+def save_contacts(contact_book):
+    with open("contacts.json", "w") as file:
+        json.dump(contact_book, file, indent=4)
+
 def main():
-    contact_book = {}
+
+    contact_book = load_contacts()
 
     while True:
 
@@ -126,20 +175,27 @@ def main():
 
         if choice == '1':
             add_contact(contact_book)
+            save_contacts(contact_book)
 
         elif choice == '2':
             view_contact(contact_book)
 
         elif choice == '3':
             edit_contact(contact_book)
+            save_contacts(contact_book)
 
         elif choice == '4':
             delete_contact(contact_book)
+            save_contacts(contact_book)
 
         elif choice == '5':
             list_all_contacts(contact_book)
 
         elif choice == '6':
+            search_contact(contact_book)
+
+        elif choice == '7':
+            print("Thank you for using Contact Book!")
             break
 
         else:
