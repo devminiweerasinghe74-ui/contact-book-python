@@ -1,4 +1,5 @@
 import json
+import re
 
 def display_menu():
     print("Contact Book Menu:")
@@ -10,6 +11,15 @@ def display_menu():
     print("6. Search Contact")
     print("7. Exit")
 
+def validate_phone(phone):
+    pattern = r"^[0-9]{10}$"
+    return re.fullmatch(pattern, phone) is not None
+
+
+def validate_email(email):
+    pattern = r"^[\w\.-]+@[\w\.-]+\.\w+$"
+    return re.fullmatch(pattern, email) is not None
+
 def add_contact(contact_book):
     name = input("Enter name: ").strip()
 
@@ -17,16 +27,20 @@ def add_contact(contact_book):
         print("Name cannot be empty!")
         return
 
+    if name in contact_book:
+        print("Contact already exists!")
+        return
+
     phone = input("Enter phone number: ").strip()
 
-    if not phone:
-        print("Phone number cannot be empty!")
+    if not validate_phone(phone):
+        print("Invalid phone number! Enter a 10-digit phone number.")
         return
 
     email = input("Enter email: ").strip()
 
-    if not email:
-        print("Email cannot be empty!")
+    if not validate_email(email):
+        print("Invalid email address!")
         return
 
     address = input("Enter address: ").strip()
@@ -35,15 +49,11 @@ def add_contact(contact_book):
         print("Address cannot be empty!")
         return
 
-    # Check if the name already exists
-    if name in contact_book:
-        print("Contact already exists!")
-    else:
-        contact_book[name] = {
-            "phone": phone,
-            "email": email,
-            "address": address
-        }
+    contact_book[name] = {
+        "phone": phone,
+        "email": email,
+        "address": address
+    }
 
     print("Contact added successfully!")
 
@@ -73,17 +83,25 @@ def edit_contact(contact_book):
 
     contact = contact_book[contact_name]
 
-    print("Press Enter to keep the current value.")
+    print("\nPress Enter to keep the current value.")
 
     phone = input(f"Phone [{contact['phone']}]: ").strip()
-    email = input(f"Email [{contact['email']}]: ").strip()
-    address = input(f"Address [{contact['address']}]: ").strip()
 
     if phone:
-        contact['phone'] = phone
+        if validate_phone(phone):
+            contact['phone'] = phone
+        else:
+            print("Invalid phone number! Keeping the old phone number.")
+
+    email = input(f"Email [{contact['email']}]: ").strip()
 
     if email:
-        contact['email'] = email
+        if validate_email(email):
+            contact['email'] = email
+        else:
+            print("Invalid email address! Keeping the old email.")
+
+    address = input(f"Address [{contact['address']}]: ").strip()
 
     if address:
         contact['address'] = address
